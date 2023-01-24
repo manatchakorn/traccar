@@ -88,9 +88,11 @@ public final class Main {
                 throw new RuntimeException("Configuration file is not provided");
             }
         } else {
+            // get the last argument -> why?
             configFile = args[args.length - 1];
         }
 
+        // for Windows installation only
         if (args.length > 0 && args[0].startsWith("--")) {
             WindowsService windowsService = new WindowsService("traccar") {
                 @Override
@@ -111,6 +113,7 @@ public final class Main {
                     break;
             }
         } else {
+            // just run with the config file in other OS.
             run(configFile);
         }
     }
@@ -118,7 +121,7 @@ public final class Main {
     public static void run(String configFile) {
         try {
             injector = Guice.createInjector(new MainModule(configFile), new DatabaseModule(), new WebModule());
-            logSystemInfo();
+            logSystemInfo(); // print system infomation here.
             LOGGER.info("Version: " + Main.class.getPackage().getImplementationVersion());
             LOGGER.info("Starting server...");
 
@@ -138,6 +141,7 @@ public final class Main {
 
             Thread.setDefaultUncaughtExceptionHandler((t, e) -> LOGGER.error("Thread exception", e));
 
+            // getRuntime will return all run time object in this java application.
             Runtime.getRuntime().addShutdownHook(new Thread(() -> {
                 LOGGER.info("Stopping server...");
 
